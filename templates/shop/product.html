@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+  {% include "includes/navigation-light.html" %}
+  <h1>Tech Shop</h1>
+
+  <section class="py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <h3 class="mb-5">
+            Latest PRODUCTS
+          </h3>
+        </div>
+        <hr />
+      </div>
+      <div class="row">
+
+        {% if product_list %}
+
+          {% for product in product_list %}
+
+            <div class="col-lg-3 col-sm-6">
+              <div class="card card-plain card-blog">
+                <div class="card-image border-radius-lg position-relative">
+                    <img class="w-100 border-radius-lg move-on-hover shadow"
+                         alt="Responsive image"
+                        src="{{ product.image.url }}">
+
+                </div>
+                <div class="card-body px-0">
+                  <h5>
+                    <a href="#" class="text-dark font-weight-bold">
+                      {{ product.title }} - ${{ product.price }}
+                    </a>
+                  </h5>
+                  <p>
+                    {{ product.description|slice:":155" }}...
+                  </p>
+                  <a href="#" class="text-info icon-move-right">
+                    See Product
+                    <i class="fas fa-arrow-right text-sm"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+
+
+        {% else %}
+
+          <div class="col-lg-12 col-sm-12">
+            <p class="lead">
+
+              {% if request.user.is_superuser %}
+
+                No products defined. <mark>Import <a href="{% url 'load_product' %}" class="text-primary">products</a> from Stripe.</mark>
+
+              {% else %}
+
+                No products defined. <mark>Autenticate as <a class="text-primary" href="/admin/">superuser</a> to import products from Stripe.</mark>
+
+              {% endif %}
+
+            </p>
+          </div>
+
+        {% endif %}
+
+
+
+      </div>
+    </div>
+  </section>
+{% endblock %}
