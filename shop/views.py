@@ -4,11 +4,6 @@ from django.views import generic
 from shop.models import Product, Category
 
 
-def categories(request):
-    return {
-        "categories": Category.objects.all()
-    }
-
 def category_list(request, pk):
     category = get_object_or_404(Category, pk=pk)
     products = Product.objects.filter(category=category)
