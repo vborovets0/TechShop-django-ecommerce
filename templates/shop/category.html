@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+  {% include "includes/navigation-light.html" %}
+
+  <section class="py-3">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <h3 class="mb-5">
+            {{ products.category.}}
+          </h3>
+        </div>
+        <hr />
+      </div>
+      <div class="row">
+
+        {% if products %}
+
+          {% for product in products %}
+
+            <div class="col-lg-3 col-sm-6">
+              <div class="card card-plain card-blog">
+                <div class="card-image border-radius-lg position-relative">
+                    <img class="w-100 border-radius-lg move-on-hover shadow"
+                         alt="Responsive image"
+                        src="{{ product.image.url }}">
+
+                </div>
+                <div class="card-body px-0">
+                  <h5>
+                    <a href="{{ product.get_absolute_url }}" class="text-dark font-weight-bold">
+                      {{ product.title }}<br>${{ product.price }}
+                    </a>
+                  </h5>
+                  <br>
+                  <p>
+                    {{ product.description|slice:":155" }}...
+                  </p>
+                  <a href="{{ product.get_absolute_url }}" class="text-info icon-move-right">
+                    See Product
+                    <i class="fas fa-arrow-right text-sm"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+
+
+        {% else %}
+
+          <div class="col-lg-12 col-sm-12">
+            <p class="lead">
+
+              {% if request.user.is_superuser %}
+
+                No products defined. <mark>Import <a href="{% url 'load_product' %}" class="text-primary">products</a> from Stripe.</mark>
+
+              {% else %}
+
+                No products defined. <mark>Autenticate as <a class="text-primary" href="/admin/">superuser</a> to import products from Stripe.</mark>
+
+              {% endif %}
+
+            </p>
+          </div>
+
+        {% endif %}
+
+
+
+      </div>
+    </div>
+  </section>
+{% endblock %}

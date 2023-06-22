@@ -44,20 +44,21 @@
                   Categories
                 </h6>
                 <ul>
-                  <li>
-                    {% if request.user.is_superuser %}
-                    <a href="#" class="dropdown-item border-radius-md">
-                      Edit Products
-                    </a>
-                    {% endif %}
-                  </li>
+                  {% if request.user.is_superuser %}
+                    <li>
+                  <a href="#" class="dropdown-item border-radius-md">
+                    Edit Products
+                  </a>
+                    </li>
+                  {% endif %}
+
                   <li>
                     <a href="/" class="dropdown-item border-radius-md">
                     All Products
                     </a></li>
                   {% for category in categories %}
                     <li>
-                      <a href="/" class="dropdown-item border-radius-md">
+                      <a href=" {{ category.get_absolute_url }} "  class="dropdown-item border-radius-md">
                         {{ category.name|title }}
                       </a>
                     </li>
