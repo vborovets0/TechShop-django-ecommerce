@@ -41,16 +41,30 @@
                       </svg>
                     </div>
                   </div>
-                  Samples
+                  Categories
                 </h6>
-                {% if request.user.is_superuser %}
-                <a href="#" class="dropdown-item border-radius-md">
-                  Edit Products
-                </a>
-                {% endif %}
-                <a href="/" class="dropdown-item border-radius-md">
-                  All Products
-                </a>
+                <ul>
+                  <li>
+                    {% if request.user.is_superuser %}
+                    <a href="#" class="dropdown-item border-radius-md">
+                      Edit Products
+                    </a>
+                    {% endif %}
+                  </li>
+                  <li>
+                    <a href="/" class="dropdown-item border-radius-md">
+                    All Products
+                    </a></li>
+                  {% for category in categories %}
+                    <li>
+                      <a href="/" class="dropdown-item border-radius-md">
+                        {{ category.name|title }}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+
+
               </div>
               <div class="d-lg-none">
                 <h6 class="dropdown-header text-dark font-weight-bolder d-flex justify-content-cente align-items-center px-0">

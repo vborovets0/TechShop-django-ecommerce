@@ -1,8 +1,13 @@
 from django.shortcuts import render
 from django.views import generic
 
-from shop.models import Product
+from shop.models import Product, Category
 
+
+def categories(request):
+    return {
+        "categories": Category.objects.all()
+    }
 
 class ProductListView(generic.ListView):
     model = Product
