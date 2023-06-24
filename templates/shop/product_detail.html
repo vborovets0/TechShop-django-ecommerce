@@ -51,7 +51,10 @@
             </div>
           </div>
           <a href="#" class="btn btn-warning shadow-0"> Buy now </a>
-          <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Add to cart </a>
+          <button type="button" id="add-button" value="{{ product.id }}"
+                  class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i>
+            Add to basket
+          </button>
       </main>
     </div>
   </div>
@@ -83,5 +86,24 @@
       </div>
   </div>
   </section>
+
+  <script>
+   $(document).on("click", "#add-button", function (e) {
+       e.preventDefault();
+       $.ajax({
+           type: "POST",
+           url: {% url "basket:basket_add" %},
+           data: {
+               productid: $("#add-button").val(),
+               csrfmiddlewaretoken: "{{ csrf_token }}",
+               action: 'post'
+           },
+           success: function (json) {},
+           error: function (xhr, errmsg, err) {}
+       });
+   })
+
+
+  </script>
 
 {% endblock %}
