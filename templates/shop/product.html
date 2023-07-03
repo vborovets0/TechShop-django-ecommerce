@@ -68,8 +68,8 @@
             <p class="lead">
 
               {% if request.user.is_superuser %}
-
-                No products defined. <mark>Import <a href="{% url 'load_product' %}" class="text-primary">products</a> from Stripe.</mark>
+{#{% url 'load_product' %}#}
+                No products defined. <mark>Import <a href="#" class="text-primary">products</a> from Stripe.</mark>
 
               {% else %}
 
