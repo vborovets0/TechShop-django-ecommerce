@@ -3,7 +3,7 @@
 
 
 {% block content %}
-  {% include "includes/navigation-light.html" %}
+  {% include "includes/navigation.html" %}
   <section class="py-5 text-center container">
     <div class="row py-lg-3">
       <div class="col-lg-6 col-md-8 mx-auto">
@@ -36,10 +36,11 @@
             <div class="col-lg-3 col-sm-6">
               <div class="card card-plain card-blog">
                 <div class="card-image border-radius-lg position-relative">
+                  <a href="{{ product.get_absolute_url }}">
                     <img class="w-100 border-radius-lg move-on-hover shadow"
                          alt="Responsive image"
                         src="{{ product.image.url }}">
-
+                  </a>
                 </div>
                 <div class="card-body px-0">
                   <h5>

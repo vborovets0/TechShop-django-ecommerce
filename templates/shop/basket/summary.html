@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Basket Summary{% endblock %}
 {% block content %}
-  {% include "includes/navigation-light.html" %}
+  {% include "includes/navigation.html" %}
 
   <main class="pt-5">
   <div class="container">
@@ -10,10 +10,10 @@
     {% for item in basket %}
     {% with product=item.product %}
     <div data-index="{{product.id}}" class="row mb-4 border product-item">
-      <div class="col-md-3 col-lg-2 order-md-first bg-light">
-        <img class="img-fluid mx-auto d-block" width="120px" alt="Responsive image" src="{{ product.image.url }}">
+      <div class="col-md-3 col-lg-3 order-md-first">
+        <img class="img-fluid mx-auto " width="100%" height="100%" alt="Responsive image" src="{{ product.image.url }}">
       </div>
-      <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
+      <div class="col-md-9 col-lg-9 ps-md-3 ps-lg-6">
         <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-reset">
           <h1 class="h5 pt-2">{{ product.title }}</h1>
         </a>

@@ -18,7 +18,7 @@ class ProductListView(generic.ListView):
     model = Product
     context_object_name = "product_list"
     template_name = "shop/product.html"
-    paginate_by = 5
+    paginate_by = 8
 
 
 class ProductDetailView(generic.DetailView):
