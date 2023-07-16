@@ -5,7 +5,7 @@
             <div class="container-fluid px-md-4">
                 <div class="d-flex w-100 navbar-collapse">
                     <a class="navbar-brand d-flex-inline" href="/">
-                      <img src="{% static 'images/logo.png' %}" width="100" height="100" >
+                      <img src="{% static 'images/logo.png' %}" width="90" height="90" >
                       <b>TechShop</b>
                     </a>
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
@@ -111,7 +111,9 @@
                     <a type="button" role="button" href="{% url "basket:basket_summary" %}"
                         class="btn btn-outline-secondary border-0 basket-btn">
 
-                        {% with total_qty=basket|length %}
+                        <div class="position-relative">
+                          <div class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                         {% with total_qty=basket|length %}
                         <div id="basket-qty" class="basket-qty">
                             {% if total_qty > 0 %}
                             {{ total_qty }}
@@ -120,7 +122,8 @@
                             {% endif %}
                         </div>
                         {% endwith %}
-                        <div>
+                          </div>
+
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                                 class="bi bi-cart3" viewBox="0 0 16 16">
                                 <path
