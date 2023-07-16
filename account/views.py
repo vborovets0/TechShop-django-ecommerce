@@ -1,11 +1,12 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.core.mail import EmailMessage, send_mail
+from django.contrib import messages
 
 from .forms import RegistrationForm, UserEditForm
 from .models import UserBase
@@ -42,15 +43,15 @@ def delete_user(request):
 
 
 def account_registration(request):
-    # if request.usre.is_authenticated:
-    #     return redirect("/")
+    if request.user.is_authenticated:
+        return redirect("/")
 
     if request.method == 'POST':
-        registerForm = RegistrationForm(request.POST)
-        if registerForm.is_valid():
-            user = registerForm.save(commit=False)
-            user.email = registerForm.cleaned_data['email']
-            user.set_password(registerForm.cleaned_data['password'])
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.email = form.cleaned_data['email']
+            user.set_password(form.cleaned_data['password'])
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
@@ -61,18 +62,29 @@ def account_registration(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            user.email_user(subject=subject, message=message)
-            return HttpResponse('registered succesfully and activation sent')
+            email = EmailMessage(subject, message, to=[user.email])
+            email.send()
+            if email.send():
+                messages.success(request, f"Please go to your email {user.email}"
+                                          f" and click in activation link to confirm the registration.")
+
+            else:
+                messages.error(request, f"Problem sending email to {user.email},"
+                                        f"check if you typed it correctly")
+            return redirect("/")
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
     else:
-        registerForm = RegistrationForm()
-    return render(request, 'account/registration/register.html', {'form': registerForm})
+        form = RegistrationForm()
+    return render(request, 'account/registration/register.html', {'form': form})
 
 
 def account_activate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = UserBase.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, user.DoesNotExist):
+    except(TypeError, ValueError, OverflowError, UserBase.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
