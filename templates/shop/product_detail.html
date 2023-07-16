@@ -2,9 +2,18 @@
 
 
 {% block content %}
-  {% include "includes/navigation.html" %}
-
- <section class="py-5">
+  <div class="position-relative">
+    <div class="position-absolute top-0 end-0 p-2">
+      <a href="{% url 'shop:product-update' pk=product.id %}" class="btn btn-outline-secondary">
+        Update
+      </a>
+      <a href="{% url 'shop:product-delete' pk=product.id %}" class="btn btn-outline-danger">
+        Delete
+      </a>
+    </div>
+  </div>
+  <br>
+  <section class="py-5">
   <div class="container">
     <div class="row gx-5">
       <aside class="col-lg-6">

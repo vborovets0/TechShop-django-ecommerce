@@ -3,7 +3,13 @@
 
 
 {% block content %}
-  {% include "includes/navigation.html" %}
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+    <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
+  </ul>
+  {% endif %}
   <section class="py-5 text-center container">
     <div class="row py-lg-3">
       <div class="col-lg-6 col-md-8 mx-auto">
@@ -52,7 +58,7 @@
                   <p>
                     {{ product.description|slice:":155" }}...
                   </p>
-                  <a href="{{ product.get_absolute_url }}" class="text-info icon-move-right">
+                  <a href="{{ product.get_absolute_url }}" class="text-primary icon-move-right">
                     See Product
                     <i class="fas fa-arrow-right text-sm"></i>
                   </a>
