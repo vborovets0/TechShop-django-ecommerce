@@ -69,7 +69,7 @@
 
                     {% if user.is_authenticated %}
                     <a type="button" role="button" href="{% url "account:logout" %}"
-                        class="btn btn-outline-secondary border-0 basket-btn">
+                        class="btn btn-outline-dark border-0 basket-btn">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                                 class="bi bi-door-closed" viewBox="0 0 16 16">
@@ -82,7 +82,7 @@
                     </a>
                     {% else %}
                     <a type="button" role="button" href="{% url "account:login" %}"
-                        class="btn btn-outline-secondary border-0 basket-btn">
+                        class="btn btn-outline-dark border-0 basket-btn">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                                 class="bi bi-door-closed" viewBox="0 0 16 16">
@@ -97,7 +97,7 @@
 
 
                     <a type="button" role="button" href="{% url "account:dashboard" %}"
-                        class="btn btn-outline-secondary border-0 basket-btn">
+                        class="btn btn-outline-dark border-0 basket-btn">
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                                 class="bi bi-person" viewBox="0 0 16 16">
@@ -109,7 +109,7 @@
                     </a>
 
                     <a type="button" role="button" href="{% url "basket:basket_summary" %}"
-                        class="btn btn-outline-secondary border-0 basket-btn">
+                        class="btn btn-outline-dark border-0 basket-btn">
 
                         <div class="position-relative">
                           <div class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
@@ -148,7 +148,7 @@
                 <form class="d-flex w-100 d-md-none">
                     <input class="form-control me-2" type="search" placeholder="Search products or FAQ"
                         aria-label="Search">
-                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    <button class="btn btn-outline-dark" type="submit">Search</button>
                 </form>
             </div>
         </nav>
