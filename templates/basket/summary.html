@@ -58,7 +58,7 @@
     <div class="col-md-5 col-lg-4 order-md-last p-0 order-3 ">
         <div class="d-grid gap-2 position-absolute end-0 w-20 p-3">
           <div class="h6 fw-bold">Sub Total: $<div id="subtotal" class="d-inline-flex">{{basket.get_total_price}}</div></div>
-          <a role="button" href="{% url "payment:basket" %}" class="btn btn-success fw-bold" type="button">Checkout</a>
+          <a role="button" href="{% url 'checkout:deliverychoices' %}" class="btn btn-success fw-bold" type="button">Checkout</a>
         </div>
       <br>
     </div>
