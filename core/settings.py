@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "basket",
     "account",
     "checkout",
+    "orders",
 
 ]
 
@@ -159,5 +160,7 @@ LOGIN_URL = '/account/login/'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+PAYPAL_CLIENT_ID = os.environ.get("PAYPAL_CLIENT_ID")
+PAYPAL_SECRET = os.environ.get("PAYPAL_SECRET")
+
+

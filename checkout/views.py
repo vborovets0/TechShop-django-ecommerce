@@ -1,16 +1,20 @@
-import stripe
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 
 from django.shortcuts import render
-from django.views import View
-from django.views.generic import TemplateView
 
 from account.models import Address
 from basket.basket import Basket
 from checkout.models import DeliveryOptions
-from core import settings
+
+from orders.models import Order, OrderItem
+
+# PayPay
+from paypalcheckoutsdk.orders import OrdersGetRequest
+from .paypal import PayPalClient
 
 
 @login_required
@@ -70,42 +74,45 @@ def payment_selection(request):
     return render(request, "checkout/payment_selection.html", {})
 
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+# PayPay
+@login_required
+def payment_complete(request):
+    PPClient = PayPalClient()
 
-class CreateCheckoutSessionView(View):
-    def post(self, request, *args, **kwargs):
-        basket = Basket(request)
-        total = str(basket.get_total_price())
-        total = total.replace('.', '')
-        total = int(total)
+    body = json.loads(request.body)
+    data = body["orderID"]
+    user_id = request.user.id
+
+    requestorder = OrdersGetRequest(data)
+    response = PPClient.client.execute(requestorder)
+
+    total_paid = response.result.purchase_units[0].amount.value
+
+    basket = Basket(request)
+    order = Order.objects.create(
+        user_id=user_id,
+        full_name=response.result.purchase_units[0].shipping.name.full_name,
+        email=response.result.payer.email_address,
+        address1=response.result.purchase_units[0].shipping.address.address_line_1,
+        address2=response.result.purchase_units[0].shipping.address.admin_area_2,
+        postal_code=response.result.purchase_units[0].shipping.address.postal_code,
+        country_code=response.result.purchase_units[0].shipping.address.country_code,
+        total_paid=response.result.purchase_units[0].amount.value,
+        order_key=response.result.id,
+        payment_option="paypal",
+        billing_status=True,
+    )
+    order_id = order.pk
+
+    for item in basket:
+        OrderItem.objects.create(order_id=order_id, product=item["product"], price=item["price"], quantity=item["qty"])
+
+    return JsonResponse("Payment completed!", safe=False)
 
 
-        YOUR_DOMAIN = "http://127.0.0.1:8002"
-        checkout_session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'total price': total,
+@login_required
+def payment_successful(request):
+    basket = Basket(request)
+    basket.clear()
+    return render(request, "checkout/payment_successful.html", {})
 
-                    },
-
-                },
-            ],
-
-            mode='payment',
-            success_url=YOUR_DOMAIN + '/success/',
-            cancel_url=YOUR_DOMAIN + '/cancel/',
-        )
-        return JsonResponse({
-            'id': checkout_session.id
-        })
-
-class SuccessView(TemplateView):
-    # template_name = "success.html"
-    pass
-
-class CancelView(TemplateView):
-    # template_name = "cancel.html"
-    pass

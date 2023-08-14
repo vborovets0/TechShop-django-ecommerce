@@ -10,6 +10,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
 from django.contrib import messages
 
+from orders.views import user_orders
 from .forms import RegistrationForm, UserEditForm, UserAddressForm
 from .models import UserBase, Address
 from .token import account_activation_token
@@ -17,8 +18,8 @@ from .token import account_activation_token
 
 @login_required
 def dashboard(request):
-    # orders = user_orders(request)
-    return render(request, 'account/user/dashboard.html',)
+    orders = user_orders(request)
+    return render(request, 'account/user/dashboard.html', {"orders": orders})
 
 
 @login_required

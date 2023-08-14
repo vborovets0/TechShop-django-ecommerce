@@ -1,4 +1,5 @@
 from checkout.models import DeliveryOptions
+from core import settings
 from shop.models import Product
 from decimal import Decimal
 
@@ -17,6 +18,7 @@ class Basket:
             self.basket[product_id]["qty"] = int(qty)
         else:
             self.basket[product_id] = {
+                "title": str(product.title),
                 "price": str(product.price),
                 "qty": int(qty),
             }
@@ -79,6 +81,13 @@ class Basket:
         if product_id in self.basket:
             del self.basket[product_id]
             self.save()
+
+    def clear(self):
+        # Remove basket from session
+        del self.session["session_key"]
+        del self.session["address"]
+        del self.session["purchase"]
+        self.save()
 
     def save(self):
         self.session.modified = True
