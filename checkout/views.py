@@ -1,12 +1,16 @@
+import stripe
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 
 from django.shortcuts import render
+from django.views import View
+from django.views.generic import TemplateView
 
 from account.models import Address
 from basket.basket import Basket
 from checkout.models import DeliveryOptions
+from core import settings
 
 
 @login_required
@@ -53,3 +57,55 @@ def delivery_address(request):
         session.modified = True
 
     return render(request, "checkout/delivery_address.html", {"addresses": addresses})
+
+
+@login_required
+def payment_selection(request):
+
+    session = request.session
+    if "address" not in session:
+        messages.success(request, "Please select address option")
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+    return render(request, "checkout/payment_selection.html", {})
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class CreateCheckoutSessionView(View):
+    def post(self, request, *args, **kwargs):
+        basket = Basket(request)
+        total = str(basket.get_total_price())
+        total = total.replace('.', '')
+        total = int(total)
+
+
+        YOUR_DOMAIN = "http://127.0.0.1:8002"
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'total price': total,
+
+                    },
+
+                },
+            ],
+
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success/',
+            cancel_url=YOUR_DOMAIN + '/cancel/',
+        )
+        return JsonResponse({
+            'id': checkout_session.id
+        })
+
+class SuccessView(TemplateView):
+    # template_name = "success.html"
+    pass
+
+class CancelView(TemplateView):
+    # template_name = "cancel.html"
+    pass
