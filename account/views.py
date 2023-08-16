@@ -10,6 +10,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.core.mail import EmailMessage
 from django.contrib import messages
 
+from orders.models import Order
 from orders.views import user_orders
 from .forms import RegistrationForm, UserEditForm, UserAddressForm
 from .models import UserBase, Address
@@ -152,4 +153,8 @@ def set_default(request, id):
 
     return redirect("account:addresses")
 
-
+@login_required
+def user_orders(request):
+    user_id = request.user.id
+    orders = Order.objects.filter(user_id=user_id).filter(billing_status=True)
+    return render(request, "account/dashboard/user_orders.html", {"orders": orders})
