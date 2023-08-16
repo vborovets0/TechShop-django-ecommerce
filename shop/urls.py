@@ -6,10 +6,11 @@ from .views import (
     category_list,
     ProductCreateView,
     ProductUpdateView,
-    ProductDeleteView)
+    ProductDeleteView, HomePageView)
 
 urlpatterns = [
-    path("", ProductListView.as_view(), name="index"),
+    path("", HomePageView.as_view(), name="index"),
+    path("all_products", ProductListView.as_view(), name="all-products"),
     path("category/<int:pk>", category_list, name="category"),
     # CRUD
     path("product/<int:pk>/", ProductDetailView.as_view(), name="product-detail"),

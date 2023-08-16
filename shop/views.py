@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
+from django.views.generic import TemplateView
 
 from shop.models import Product, Category
 
@@ -16,11 +17,19 @@ def category_list(request, pk):
     return render(request, "shop/category.html", context=context)
 
 
+class HomePageView(TemplateView):
+    template_name = "shop/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["product_list"] = Product.objects.all()[:4]
+        return context
+
+
 class ProductListView(generic.ListView):
     model = Product
-    context_object_name = "product_list"
-    template_name = "shop/product.html"
-    paginate_by = 4
+    context_object_name = "products"
+    template_name = "shop/all_products.html"
 
 
 class ProductDetailView(generic.DetailView):
