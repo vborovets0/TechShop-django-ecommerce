@@ -6,7 +6,9 @@
 
   <main class="pt-5">
   <div class="container position-relative">
+   {% if basket %}
     <h1 class="h5">Shopping basket</h1>
+
     {% for item in basket %}
     {% with product=item.product %}
     <div data-index="{{product.id}}" class="row mb-4 border product-item">
@@ -27,22 +29,39 @@
           <div class="col">
             <div class="row p-3">
               <div class="col-12">
-                <label for="select">Qty</label>
-                <select id="select{{product.id}}">
-                  <option value="" selected disabled hidden>{{item.qty}}</option>
-                  <option value="">1</option>
-                  <option value="">2</option>
-                  <option value="">3</option>
-                  <option value="">4</option>
-                </select>
-                <button type="button" id="update-button" data-index="{{product.id}}"
+                <div class="container">
+  <div class="row" style="width: 300px">
+    <div class="col-sm">
+      <div class="input-group">
+        <span class="input-group-btn">
+            <button type="button" class="quantity-left-minus btn btn-danger btn-number "  data-type="minus" data-field="">
+              <span style="-webkit-text-stroke-width: 1px;">-</span>
+            </button>
+        </span>
+        <div class="col-sm">
+          <input type="text" id="quantity" name="quantity" class="form-control input-number text-center" value="{{item.qty}}" min="1" max="100">
+        </div>
+        <div class="col-sm">
+          <span class="input-group-btn">
+              <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                  <span style="-webkit-text-stroke-width: 1px;">+</span>
+              </button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+      <button type="button" id="update-button" data-index="{{product.id}}"
                   class="btn btn-outline-secondary btn-sm update-button">
                   Update
                 </button>
-                <button type="button" id="delete-button" data-index="{{product.id}}"
-                  class="btn btn-outline-secondary btn-sm delete-button">
+      <button type="button" id="delete-button" data-index="{{product.id}}"
+                  class="btn btn-outline-danger btn-sm delete-button">
                   Delete
                 </button>
+</div>
+
               </div>
             </div>
           </div>
@@ -60,49 +79,88 @@
         </div>
       <br>
     </div>
+  {% else  %}
+     <div class="text-center">
+      <h3>Time to start shopping!</h3><i class='fas fa-tags' style='font-size:48px;'></i>
+      <h4>Your cart is empty</h4>
+     </div>
+  {% endif %}
 
   </div>
 </main>
 <script>
-  // Delete Item
-  $(document).on('click', '.delete-button', function (e) {
-    e.preventDefault();
-    var prodid = $(this).data('index');
-    $.ajax({
-      type: 'POST',
-      url: '{% url "basket:basket_delete" %}',
-      data: {
-        productid: $(this).data('index'),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'delete'
-      },
-      success: function (json) {
-        $('.product-item[data-index="' + prodid + '"]').remove();
-        document.getElementById("subtotal").innerHTML = json.subtotal;
-        document.getElementById("basket-qty").innerHTML = json.qty
-      },
-      error: function (xhr, errmsg, err) {}
+  $(document).ready(function () {
+    // Plus button click handler
+    $(document).on('click', '.quantity-right-plus', function (e) {
+      e.preventDefault();
+      var quantityInput = $(this).closest('.input-group').find('.input-number');
+      var currentValue = parseInt(quantityInput.val());
+      var maxValue = parseInt(quantityInput.attr('max'));
+
+      if (!isNaN(currentValue) && currentValue < maxValue) {
+        quantityInput.val(currentValue + 1);
+      }
     });
-  })
-// Update Item
-  $(document).on('click', '.update-button', function (e) {
-    e.preventDefault();
-    var prodid = $(this).data('index');
-    $.ajax({
-      type: 'POST',
-      url: '{% url "basket:basket_update" %}',
-      data: {
-        productid: $(this).data('index'),
-        productqty: $('#select' + prodid + ' option:selected').text(),
-        csrfmiddlewaretoken: "{{csrf_token}}",
-        action: 'post'
-      },
-      success: function (json) {
-        document.getElementById("basket-qty").innerHTML = json.qty
-        document.getElementById("subtotal").innerHTML = json.subtotal
-      },
-      error: function (xhr, errmsg, err) {}
+
+    // Minus button click handler
+    $(document).on('click', '.quantity-left-minus', function (e) {
+      e.preventDefault();
+      var quantityInput = $(this).closest('.input-group').find('.input-number');
+      var currentValue = parseInt(quantityInput.val());
+      var minValue = parseInt(quantityInput.attr('min'));
+
+      if (!isNaN(currentValue) && currentValue > minValue) {
+        quantityInput.val(currentValue - 1);
+      }
     });
-  })
+
+    // Update button click handler
+    $(document).on('click', '.update-button', function (e) {
+      e.preventDefault();
+      var prodid = $(this).data('index');
+      var productQty = $('#quantity').val(); // Assuming you're using the same ID for the quantity input
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_update" %}',
+        data: {
+          productid: prodid,
+          productqty: productQty,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          action: 'post'
+        },
+        success: function (json) {
+          document.getElementById("subtotal").innerHTML = json.subtotal;
+          document.getElementById("basket-qty").innerHTML = json.qty;
+        },
+        error: function (xhr, errmsg, err) {
+          // Handle error
+        }
+      });
+    });
+
+    // Delete button click handler
+    $(document).on('click', '.delete-button', function (e) {
+      e.preventDefault();
+      var prodid = $(this).data('index');
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_delete" %}',
+        data: {
+          productid: prodid,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          action: 'delete'
+        },
+        success: function (json) {
+          $('.product-item[data-index="' + prodid + '"]').remove();
+          document.getElementById("subtotal").innerHTML = json.subtotal;
+          document.getElementById("basket-qty").innerHTML = json.qty;
+        },
+        error: function (xhr, errmsg, err) {
+          // Handle error
+        }
+      });
+    });
+  });
 </script>
+
 {% endblock %}
