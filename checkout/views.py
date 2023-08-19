@@ -20,6 +20,10 @@ from .paypal import PayPalClient
 @login_required
 def deliverychoices(request):
     deliveryoptions = DeliveryOptions.objects.filter(is_active=True)
+    basket = Basket(request)
+    if len(basket) == 0:
+        messages.success(request, "Please add product to basket")
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
     return render(request, "checkout/delivery_choices.html", {"deliveryoptions": deliveryoptions})
 
 
