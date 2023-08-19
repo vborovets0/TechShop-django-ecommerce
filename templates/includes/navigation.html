@@ -5,7 +5,7 @@
             <div class="container-fluid px-md-4">
                 <div class="d-flex w-100 navbar-collapse">
                     <a class="navbar-brand d-flex-inline" href="/">
-                      <img src="{% static 'images/logo.png' %}" width="90" height="90" >
+                      <img src="{% static 'images/logo.png' %}" width="75" height="80" >
                       <b>TechShop</b>
                     </a>
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
@@ -67,8 +67,8 @@
                       </li>
                     {% if request.user.is_superuser %}
                     <li class="nav-item">
-                       <div class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center">
-                         <a href="">Add product</a>
+                       <div class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center btn btn-primary">
+                         <a href="{% url "shop:product-create" %}" class="text-light">Add product</a>
                          </div>
                       </li>
                     {% endif %}

@@ -37,7 +37,7 @@
                   <p>
                     {{ product.description|slice:":155" }}...
                   </p>
-                  <a href="{{ product.get_absolute_url }}" class="text-info icon-move-right">
+                  <a href="{{ product.get_absolute_url }}" class="text-primary icon-move-right">
                     See Product
                     <i class="fas fa-arrow-right text-sm"></i>
                   </a>
@@ -47,22 +47,13 @@
 
           {% endfor %}
 
-
         {% else %}
-
           <div class="col-lg-12 col-sm-12">
             <p class="lead">
-
               No products defined.
-
-
-
             </p>
           </div>
-
         {% endif %}
-
-
 
       </div>
     </div>
