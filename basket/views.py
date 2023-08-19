@@ -23,6 +23,7 @@ def basket_add(request):
 
         return response
 
+
 def basket_update(request):
     basket = Basket(request)
     if request.POST.get('action') == 'post':
@@ -34,6 +35,7 @@ def basket_update(request):
         baskettotal = basket.get_total_price()
         response = JsonResponse({'qty': basketqty, 'subtotal': baskettotal})
         return response
+
 
 def basket_delete(request):
     basket = Basket(request)
