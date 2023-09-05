@@ -1,5 +1,4 @@
 from checkout.models import DeliveryOptions
-from core import settings
 from shop.models import Product
 from decimal import Decimal
 
@@ -18,7 +17,7 @@ class Basket:
             self.basket[product_id]["qty"] = int(qty)
         else:
             self.basket[product_id] = {
-                "title": str(product.title),
+
                 "price": str(product.price),
                 "qty": int(qty),
             }

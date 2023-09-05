@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -48,7 +48,7 @@ def delete_user(request):
 
 def account_registration(request):
     if request.user.is_authenticated:
-        return redirect("/")
+        return redirect("account:dashboard")
 
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -75,10 +75,11 @@ def account_registration(request):
             else:
                 messages.error(request, f"Problem sending email to {user.email},"
                                         f"check if you typed it correctly")
-            return redirect("/")
+            return render(request, "account/registration/login.html", {"form": form})
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
+            return HttpResponse("Error handler content", status=400)
     else:
         form = RegistrationForm()
     return render(request, 'account/registration/register.html', {'form': form})
@@ -116,10 +117,11 @@ def add_address(request):
             address_form.customer = request.user
             address_form.save()
             return HttpResponseRedirect(reverse("account:addresses"))
+        else:
+            return HttpResponse("Error handler content", status=400)
     else:
         address_form = UserAddressForm()
     return render(request, "account/dashboard/edit_addresses.html", {"form": address_form})
-
 
 @login_required
 def edit_address(request, id):
