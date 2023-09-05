@@ -5,12 +5,18 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin
 )
-from django.core.mail import send_mail
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
 class CustomAccountManager(BaseUserManager):
+    def validateEmail(self, email):
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise ValueError(_("You must provide a valid email address"))
 
     def create_superuser(self, email, user_name, password, **other_fields):
 
@@ -25,12 +31,21 @@ class CustomAccountManager(BaseUserManager):
             raise ValueError(
                 'Superuser must be assigned to is_superuser=True.')
 
+        if email:
+            email = self.normalize_email(email)
+            self.validateEmail(email)
+        else:
+            raise ValueError(_("You must provide an email address"))
+
         return self.create_user(email, user_name, password, **other_fields)
 
     def create_user(self, email, user_name, password, **other_fields):
 
-        if not email:
-            raise ValueError(_('You must provide an email address'))
+        if email:
+            email = self.normalize_email(email)
+            self.validateEmail(email)
+        else:
+            raise ValueError(_("You must provide an email address"))
 
         email = self.normalize_email(email)
         user = self.model(email=email, user_name=user_name,
@@ -59,14 +74,6 @@ class UserBase(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Accounts"
         verbose_name_plural = "Accounts"
 
-    def email_user(self, subject, message):
-        send_mail(
-            subject,
-            message,
-            'l@1.com',
-            [self.email],
-            fail_silently=False,
-        )
 
     def __str__(self):
         return self.user_name
@@ -78,7 +85,7 @@ class Address(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    customer = models.ForeignKey(UserBase, verbose_name=_("Customer"), on_delete=models.CASCADE)
+    user = models.ForeignKey(UserBase, verbose_name=_("Customer"), on_delete=models.CASCADE)
     full_name = models.CharField(_("Full Name"), max_length=150)
     phone = models.CharField(_("Phone Number"), max_length=50)
     postcode = models.CharField(_("Postcode"), max_length=50)
